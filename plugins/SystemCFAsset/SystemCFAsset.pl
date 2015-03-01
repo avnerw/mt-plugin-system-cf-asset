@@ -128,7 +128,7 @@ sub _new_complete_insert {
     my $edit_field = $app->param('edit_field') || '';
 
     unless ( !$blog_id && $edit_field =~ m/^customfield_.*$/ ) {
-        return $orig_coplete_insert->( $app, @_ );
+        return $orig_complete_insert->( $app, @_ );
     }
 
     # Set system permissions.
