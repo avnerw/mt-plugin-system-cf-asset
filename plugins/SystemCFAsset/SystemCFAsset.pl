@@ -5,11 +5,6 @@ use utf8;
 
 use base qw( MT::Plugin );
 
-use MT::CMS::Asset;
-my $orig_dialog_list_asset = \&MT::CMS::Asset::dialog_list_asset;
-my $orig_upload_file       = \&MT::CMS::Asset::upload_file;
-my $orig_complete_insert   = \&MT::CMS::Asset::complete_insert;
-
 my $plugin = __PACKAGE__->new(
     {   name    => 'SystemCFAsset',
         version => 0.01,
@@ -69,6 +64,14 @@ sub _delete_upload_mode {
     delete $param->{upload_mode};
 }
 
+use MT::CMS::Asset;
+my $orig_dialog_list_asset = \&MT::CMS::Asset::dialog_list_asset;
+my $orig_upload_file       = \&MT::CMS::Asset::upload_file;
+my $orig_complete_insert   = \&MT::CMS::Asset::complete_insert;
+
+use MT::App;
+my $orig_listing = \&MT::App::listing;
+
 sub _overwrite_methods {
     no warnings 'redefine';
     *MT::CMS::Asset::dialog_list_asset = \&_new_dialog_list_asset;
@@ -102,7 +105,36 @@ sub _new_dialog_list_asset {
     # Set a flag for resetting fake.
     $app->request( 'fake_upload_mode', 1 );
 
+    # Exclude userpics.
+    local *MT::App::listing = \&_new_listing;
+
     return $orig_dialog_list_asset->( $app, @_ );
+}
+
+sub _new_listing {
+    my ( $app, $opt ) = @_;
+
+    if ( !$opt->{params}{is_image} ) {
+        return $orig_listing->(@_);
+    }
+
+    require MT::Tag;
+    my $tag = MT::Tag->load( { name => '@userpic' },
+        { binary => { name => 1 } } );
+    if ($tag) {
+        require MT::ObjectTag;
+        my @object_tags = MT::ObjectTag->load(
+            {   tag_id            => $tag->id,
+                object_datasource => MT::Asset->datasource
+            }
+        );
+        if (@object_tags) {
+            my @asset_ids = map { $_->object_id } @object_tags;
+            $opt->{terms}{id} = { not => \@asset_ids };
+        }
+    }
+
+    return $orig_listing->(@_);
 }
 
 sub _new_upload_file {
