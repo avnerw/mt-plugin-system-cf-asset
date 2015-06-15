@@ -7,7 +7,7 @@ use base qw( MT::Plugin );
 
 my $plugin = __PACKAGE__->new(
     {   name    => 'SystemCFAsset',
-        version => 0.02,
+        version => 0.03,
 
         description =>
             '<__trans phrase="You can create and use asset-relative custom fields in system scope.">',
