@@ -30,6 +30,13 @@ my $plugin = __PACKAGE__->new(
                     },
                 },
             },
+
+            l10n_lexicon => {
+                ja => {
+                    'You can create and use asset-relative custom fields in system scope.'
+                        => 'システムスコープにおけるアイテムのカスタムフィールドを作成可能にします。',
+                },
+            },
         },
     }
 );
