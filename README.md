@@ -1,4 +1,5 @@
-mt-plugin-system-cf-asset
-=========================
+# SystemCFAsset
+システムスコープにおけるアイテムのカスタムフィールドを作成可能にする Movable Type プラグイン。
 
-You can create and use asset-relative custom fields in system scope.
+## ライセンス
+MIT License
