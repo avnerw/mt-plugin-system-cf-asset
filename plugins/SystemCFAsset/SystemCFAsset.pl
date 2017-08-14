@@ -106,7 +106,7 @@ sub _new_dialog_list_asset {
     # Fake upload_mode temporarily.
     my $query      = $app->param;
     my @parameters = @{ $query->{'.parameters'} };
-    local $query->{'.parameters'} = ( @parameters, 'upload_mode' );
+    local @{ $query->{'.parameters'} } = ( @parameters, 'upload_mode' );
     local $query->{param}{upload_mode} = ['upload_userpic'];
 
     # Set a flag for resetting fake.
